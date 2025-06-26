@@ -1,6 +1,5 @@
-[![Build](https://img.shields.io/badge/build-pyinstaller%20--noconsole-blue)](https://www.pyinstaller.org/)
 [![Status](https://img.shields.io/badge/status-active-critical)](https://github.com/aitji/anti-roblox)
-[![Auto-Update](https://img.shields.io/badge/auto--update-enabled-success)](https://raw.githubusercontent.com/aitji/anti-roblox/main/anti_roblox.py)
+[![Auto-Update](https://img.shields.io/badge/auto--update-enabled-success)](https://raw.githubusercontent.com/aitji/anti-roblox/main/anti_roblox.pyw)
 
 > [!NOTE]
 > If you came here looking for Roblox... go back.
@@ -32,7 +31,8 @@ pyinstaller --noconsole --onefile anti_roblox.pyw
 aitji/anti-roblox
 ├── anti_roblox.pyw       # main script (auto-update + uninstall + stealth)
 ├── README.md             # this file
-└── /dist/                # compiled .exe output
+├── version.json          # auto update version file
+└── /dist/*.exe           # compiled .exe output
 ```
 
 ---
@@ -42,13 +42,12 @@ aitji/anti-roblox
 This script silently updates itself from:
 
 ```
-https://raw.githubusercontent.com/aitji/anti-roblox/main/anti_roblox.py
+https://raw.githubusercontent.com/aitji/anti-roblox/main/anti_roblox.pyw
 ```
 
-## Disclaimer
-
-This project is made for fun and local use only.
-
+> [!WARNING]
+> Disclaimer
+> This project is made for fun and local use only.
 > Note: If you run this on school computers, you're on your own.  
 > Note: If you rename the file, it will silently fix itself.  
 > Note: No GUI, no logs, no mercy.
