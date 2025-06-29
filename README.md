@@ -14,10 +14,10 @@ This is a script that:
 
 ## Build Instructions
 
-Requires: Python 3.x, `pyinstaller`, `requests`
+Requires: Python 3.x, `pyinstaller`, `requests`, `watchdog`
 
 ```bash
-pip install requests
+pip install requests watchdog
 pyinstaller --noconsole --onefile anti_roblox.pyw
 ```
 

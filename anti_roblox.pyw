@@ -1,21 +1,23 @@
-import os, time, subprocess, shutil, psutil, sys, json, urllib.request
+import os, sys, time, json, shutil, threading, urllib.request
+import psutil, wmi
 from pathlib import Path
+from watchdog.observers import Observer
+from watchdog.events import FileSystemEventHandler
 
-DOWNLOADS = Path.home() / "Downloads"
-ROBLOX_PROCESSES = ["RobloxPlayerBeta.exe", "RobloxStudioBeta.exe"]
-ROBLOX_DIR = Path(os.getenv("LOCALAPPDATA", "")) / "Roblox" / "Versions"
+ROBLOX_PROCS = {"RobloxPlayerBeta.exe", "RobloxStudioBeta.exe"}
+ROBLOX_DIR = Path.home() / "AppData/Local/Roblox/Versions"
+DL_DIR = Path.home() / "Downloads"
 APPDIR = Path(os.getenv("LOCALAPPDATA", "")) / "anti-roblox"
-EXE_NAME = "anti_roblox.exe"
-TARGET_EXE = APPDIR / EXE_NAME
-STARTUP_BAT = Path(os.getenv("APPDATA")) / "Microsoft" / "Windows" / "Start Menu" / "Programs" / "Startup" / "anti_roblox.bat"
+EXE_PATH = APPDIR / "anti_roblox.exe"
 VERSION_FILE = APPDIR / "version.json"
+STARTUP_BAT = Path(os.getenv("APPDATA")) / "Microsoft/Windows/Start Menu/Programs/Startup/anti_roblox.bat"
 
-REMOTE_VERSION_URL = "https://raw.githubusercontent.com/aitji/anti-roblox/main/version.json"
-REMOTE_EXE_URL = "https://github.com/aitji/anti-roblox/raw/main/dist/anti_roblox.exe"
+REMOTE_VERSION = "https://raw.githubusercontent.com/aitji/anti-roblox/main/version.json"
+REMOTE_EXE = "https://github.com/aitji/anti-roblox/raw/main/dist/anti_roblox.exe"
 
 def checkUpdate():
     try:
-        with urllib.request.urlopen(REMOTE_VERSION_URL, timeout=5) as res:
+        with urllib.request.urlopen(REMOTE_VERSION, timeout=5) as res:
             remote = json.loads(res.read().decode())
         local = {"version": "0.0"}
         if VERSION_FILE.exists():
@@ -23,52 +25,73 @@ def checkUpdate():
                 local = json.load(f)
         if remote["version"] > local["version"]:
             tmp = APPDIR / "update.exe"
-            urllib.request.urlretrieve(REMOTE_EXE_URL, tmp)
-            shutil.move(str(tmp), TARGET_EXE)
+            urllib.request.urlretrieve(REMOTE_EXE, tmp)
+            shutil.move(str(tmp), EXE_PATH)
             with open(VERSION_FILE, 'w', encoding='utf-8') as f:
                 json.dump(remote, f)
+            os.execv(EXE_PATH, [str(EXE_PATH)])
     except: pass
 
-def deleteInstaller():
-    for file in DOWNLOADS.glob("RobloxPlayerInstaller-*.exe"):
-        try: file.unlink()
-        except: pass
-
 def killRoblox():
-    for proc in psutil.process_iter(['name']):
-        if proc.info['name'] in ROBLOX_PROCESSES:
-            try: proc.kill()
+    for proc in psutil.process_iter(['pid', 'name']):
+        if proc.info['name'] in ROBLOX_PROCS:
+            try: psutil.Process(proc.info['pid']).kill()
             except: pass
 
-def uninstallRoblox():
+def cleanRobloxInstall():
+    for f in DL_DIR.glob("RobloxPlayerInstaller-*.exe"):
+        try: f.unlink()
+        except: pass
     if ROBLOX_DIR.exists():
+        try: shutil.rmtree(ROBLOX_DIR, ignore_errors=True)
+        except: pass
+
+class RobloxInstallerHandler(FileSystemEventHandler):
+    def on_created(self, event):
+        name = Path(event.src_path).name
+        if name.startswith("RobloxPlayerInstaller") and name.endswith(".exe"):
+            try: Path(event.src_path).unlink()
+            except: pass
+
+def monitorFiles():
+    event_handler = RobloxInstallerHandler()
+    observer = Observer()
+    observer.schedule(event_handler, str(DL_DIR), recursive=False)
+    observer.start()
+    return observer
+
+def monitorProcess():
+    w = wmi.WMI()
+    watcher = w.Win32_Process.watch_for("creation")
+    while True:
         try:
-            for proc in ROBLOX_PROCESSES:
-                subprocess.call(['taskkill', '/f', '/im', proc], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            shutil.rmtree(ROBLOX_DIR, ignore_errors=True)
+            proc = watcher()
+            if proc.Name in ROBLOX_PROCS:
+                killRoblox()
+                cleanRobloxInstall()
         except: pass
 
 def setupStartup():
     APPDIR.mkdir(exist_ok=True)
-    if not TARGET_EXE.exists():
-        try: shutil.copy2(sys.executable, TARGET_EXE)
+    if not EXE_PATH.exists():
+        try: shutil.copy2(sys.executable, EXE_PATH)
         except: pass
     if not STARTUP_BAT.exists():
         try:
             with open(STARTUP_BAT, 'w', encoding='utf-8') as f:
-                f.write(f'start "" "{TARGET_EXE}"\n')
+                f.write(f'start "" "{EXE_PATH}"\n')
         except: pass
     if not VERSION_FILE.exists():
         with open(VERSION_FILE, 'w', encoding='utf-8') as f:
             json.dump({"version": "1.0"}, f)
 
-def antiLoop():
+def main():
     setupStartup()
     checkUpdate()
-    while True:
-        deleteInstaller()
-        killRoblox()
-        uninstallRoblox()
-        time.sleep(5)
+    killRoblox()
+    cleanRobloxInstall()
+    observer = monitorFiles()
+    threading.Thread(target=monitorProcess, daemon=True).start()
+    observer.join()
 
-if __name__ == "__main__": antiLoop()
+if __name__ == "__main__": main()
