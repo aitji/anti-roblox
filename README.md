@@ -7,7 +7,7 @@
 This is a script that:
 - Terminates Roblox Player & Studio
 - Removes all files, shortcuts, and temp installers
-- Silently runs and adds itself to system startup
+- Silently runs and adds itself to system startup: `shell:common startup`
 - Auto-updates from GitHub
 
 > Built for one purpose: clean the system like Roblox never existed.
@@ -48,6 +48,6 @@ https://raw.githubusercontent.com/aitji/anti-roblox/main/anti_roblox.pyw
 > [!WARNING]
 > Disclaimer
 > This project is made for fun and local use only.
-> Note: If you run this on school computers, you're on your own.  
-> Note: If you rename the file, it will silently fix itself.  
-> Note: No GUI, no logs, no mercy.
+> If you run this on school computers, you're on your own.
+> If you rename the file, it will silently fix itself.
+> No GUI, no logs, no mercy.

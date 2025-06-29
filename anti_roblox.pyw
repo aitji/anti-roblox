@@ -23,18 +23,21 @@ def checkUpdate():
         if VERSION_FILE.exists():
             with open(VERSION_FILE, 'r', encoding='utf-8') as f:
                 local = json.load(f)
-        if remote["version"] > local["version"]:
+        local_ver = local.get("version", "0.0")
+        if remote["version"] > local_ver:
             tmp = APPDIR / "update.exe"
             urllib.request.urlretrieve(REMOTE_EXE, tmp)
             shutil.move(str(tmp), EXE_PATH)
             with open(VERSION_FILE, 'w', encoding='utf-8') as f:
                 json.dump(remote, f)
-            os.execv(EXE_PATH, [str(EXE_PATH)])
+            os.startfile(EXE_PATH)
+            sys.exit()
     except: pass
 
 def killRoblox():
     for proc in psutil.process_iter(['pid', 'name']):
-        if proc.info['name'] in ROBLOX_PROCS:
+        name = proc.info.get('name')
+        if name in ROBLOX_PROCS:
             try: psutil.Process(proc.info['pid']).kill()
             except: pass
 
@@ -54,6 +57,7 @@ class RobloxInstallerHandler(FileSystemEventHandler):
             except: pass
 
 def monitorFiles():
+    DL_DIR.mkdir(parents=True, exist_ok=True)
     event_handler = RobloxInstallerHandler()
     observer = Observer()
     observer.schedule(event_handler, str(DL_DIR), recursive=False)
@@ -61,18 +65,20 @@ def monitorFiles():
     return observer
 
 def monitorProcess():
-    w = wmi.WMI()
-    watcher = w.Win32_Process.watch_for("creation")
-    while True:
-        try:
-            proc = watcher()
-            if proc.Name in ROBLOX_PROCS:
-                killRoblox()
-                cleanRobloxInstall()
-        except: pass
+    time.sleep(1)
+    try:
+        w = wmi.WMI()
+        watcher = w.Win32_Process.watch_for("creation")
+        while True:
+            try:
+                proc = watcher()
+                if proc.Name in ROBLOX_PROCS:
+                    killRoblox()
+                    cleanRobloxInstall()
+            except: pass
+    except: pass
 
 def setupStartup():
-    APPDIR.mkdir(exist_ok=True)
     if not EXE_PATH.exists():
         try: shutil.copy2(sys.executable, EXE_PATH)
         except: pass
@@ -86,6 +92,8 @@ def setupStartup():
             json.dump({"version": "1.0"}, f)
 
 def main():
+    APPDIR.mkdir(exist_ok=True)
+
     setupStartup()
     checkUpdate()
     killRoblox()
