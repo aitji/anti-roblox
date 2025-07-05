@@ -12,7 +12,6 @@ This is a script that:
 
 > Built for one purpose: clean the system like Roblox never existed.
 
-## Build Instructions
 
 Requires: Python 3.x, `pyinstaller`, `requests`, `watchdog`
 
@@ -25,7 +24,6 @@ pyinstaller --noconsole --onefile anti_roblox.pyw
 
 ---
 
-## File Structure
 
 ```
 aitji/anti-roblox
@@ -37,7 +35,6 @@ aitji/anti-roblox
 
 ---
 
-## Auto Update
 
 This script silently updates itself from:
 
