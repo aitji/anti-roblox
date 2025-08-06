@@ -7,7 +7,7 @@
 This is a script that:
 - Terminates Roblox Player & Studio
 - Removes all files, shortcuts, and temp installers
-- Silently runs and adds itself to system startup: `shell:common startup`
+- Silently runs and adds itself to system startup: `shell:startup`
 - Auto-updates from GitHub
 
 > Built for one purpose: clean the system like Roblox never existed.
