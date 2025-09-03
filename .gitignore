@@ -1,2 +1,5 @@
-/build
-anti_roblox.spec
+# ---------------- EXE Builds ---------------- #
+/build/*
+# ---------------- Python ---------------- #
+/.venv/*
+/upx/*

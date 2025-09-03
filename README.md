@@ -13,13 +13,26 @@ This is a script that:
 > Built for one purpose: clean the system like Roblox never existed.
 
 
-Requires: Python 3.x, `pyinstaller`, `requests`, `watchdog`
+Requires: Python 3.x, `psutil`, `watchdog`, `numba`, `pywin32`
 
 ```bash
-pip install requests watchdog
+pip install -r requirements.txt
+```
+
+you can direct load python module by this below command!
+
+```bash
+pip install psutil watchdog numba pywin32
+```
+
+## Build Python to EXE
+
+```bash
 pyinstaller --noconsole --onefile anti_roblox.pyw
 ```
 
+> You should grab "anti_roblox.spec" too
+> 
 > Output will be at `/dist/anti_roblox.exe`
 
 ---
@@ -27,9 +40,11 @@ pyinstaller --noconsole --onefile anti_roblox.pyw
 
 ```
 aitji/anti-roblox
-├── anti_roblox.pyw       # main script (auto-update + uninstall + stealth)
-├── README.md             # this file
+├── anti_roblox.pyw       # main snip
+├── isItonMyPc.py         # check anti roblox snip
 ├── version.json          # auto update version file
+├── anti_roblox.spec      # spec to build exe
+├── README.md             # this file
 └── /dist/*.exe           # compiled .exe output
 ```
 
@@ -44,6 +59,7 @@ https://raw.githubusercontent.com/aitji/anti-roblox/main/anti_roblox.pyw
 
 > [!WARNING]
 > Disclaimer
+> 
 > This project is made for fun and local use only.
 > 
 > If you run this on school computers, you're on your own.
