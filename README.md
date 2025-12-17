@@ -6,9 +6,9 @@
 
 This is a script that:
 - Terminates Roblox Player & Studio
-- Removes all files, shortcuts, and temp installers
+- Removes all\* files, shortcuts, and temp installers
 - Silently runs and adds itself to system startup: `shell:startup`
-- Auto-updates from GitHub
+- Auto-updates from this GitHub
 
 > Built for one purpose: clean the system like Roblox never existed.
 
@@ -59,11 +59,16 @@ https://raw.githubusercontent.com/aitji/anti-roblox/main/anti_roblox.pyw
 
 > [!WARNING]
 > Disclaimer
-> 
-> This project is made for fun and local use only.
-> 
-> If you run this on school computers, you're on your own.
-> 
-> If you rename the file, it will silently fix itself.
-> 
-> No GUI, no logs, no mercy.
+> This project is made for fun and local use only, If you run this on school computers, you're on your own.
+>
+> If you rename the file, it will silently fix itself. (No GUI, no logs, no mercy)
+
+## Star History
+
+<a href="https://www.star-history.com/#aitji/anti-roblox&type=date&legend=bottom-right">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=aitji/anti-roblox&type=date&theme=dark&legend=bottom-right" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=aitji/anti-roblox&type=date&legend=bottom-right" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=aitji/anti-roblox&type=date&legend=bottom-right" />
+ </picture>
+</a>
